@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // Wise (TransferWise) Personal API MCP server — 10 read-only tools.
 
-import { readFileSync } from 'fs';
+import { readFileSync, realpathSync } from 'fs';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { WiseApiError } from './api.js';
 import { listProfiles, getProfile, listProfilesInput, getProfileInput } from './tools/profiles.js';
@@ -224,8 +224,21 @@ async function main() {
   await server.connect(transport);
 }
 
-const isMainModule = import.meta.url === pathToFileURL(process.argv[1] ?? '').href;
-if (isMainModule) {
+// Run main when invoked as a CLI. Comparing import.meta.url to process.argv[1]
+// directly fails when npm creates a bin shim — the shim's path differs from
+// the real module path. Resolve symlinks on both sides before comparing so
+// `npx @aiwerk/mcp-server-wise` works the same as `node dist/src/server.js`.
+function isCliEntry(): boolean {
+  const entry = process.argv[1];
+  if (!entry) return false;
+  try {
+    return realpathSync(fileURLToPath(import.meta.url)) === realpathSync(entry);
+  } catch {
+    return false;
+  }
+}
+
+if (isCliEntry()) {
   main().catch((err) => {
     console.error('[mcp-server-wise] fatal:', err);
     process.exit(1);
