@@ -3,6 +3,17 @@
 All notable changes to `@aiwerk/mcp-server-wise` are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## 0.1.5 — 2026-04-21
+
+Docs-only release.
+
+### Docs
+- README: Split install into Hosted (aiwerkmcp.com) and Self-hosted (npx) options. The hosted option lands on `bridge.aiwerk.ch/u/<user-id>/mcp` with zero local setup — token AES-256-GCM encrypted via Vault.
+- README: Added "About AIWerk MCP" footer cross-linking cal, imap, clawhub.
+
+### Package metadata
+- Added `bugs` URL field (alongside existing `homepage` and `repository`) — surfaces on npmjs.com and external catalogs.
+
 ## 0.1.4 — 2026-04-20
 
 Third Axel-review pass — build workflow tightening.

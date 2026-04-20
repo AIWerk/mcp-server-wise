@@ -1,6 +1,6 @@
 {
   "name": "@aiwerk/mcp-server-wise",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Wise (TransferWise) Personal API MCP server — read-only: profiles, balances, rates, transfers, recipients",
   "type": "module",
   "main": "dist/src/server.js",
@@ -37,6 +37,9 @@
     "url": "git+https://github.com/AIWerk/mcp-server-wise.git"
   },
   "homepage": "https://aiwerkmcp.com",
+  "bugs": {
+    "url": "https://github.com/AIWerk/mcp-server-wise/issues"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.19.1",
     "zod": "^3.25.76"
