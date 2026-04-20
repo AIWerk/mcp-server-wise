@@ -2,7 +2,7 @@
 
 Wise (TransferWise) Personal API MCP server. Read-only: profiles, balances, rates, transfers, recipients.
 
-## Tools (v0.1.3, 11 read-only)
+## Tools (v0.1.4, 11 read-only)
 
 - `wise_list_profiles`, `wise_get_profile`
 - `wise_list_balances`, `wise_get_balance`
@@ -60,6 +60,12 @@ Errors surface as MCP `isError: true` responses with distinct prefixes:
 2. `wise_list_balances({profileId})` → see available currencies / amounts
 3. `wise_get_exchange_rate({source, target})` → check rate
 4. `wise_list_transfers({profileId, status})` → history / status lookup
+
+## Build / dev notes
+
+- `src/version.ts` is **generated** from `package.json` by `scripts/gen-version.mjs` (runs as `prebuild` / `predev` / `pretest`). The file IS committed so a fresh clone compiles immediately.
+- The generator is idempotent: it only writes when the version actually changes. So `npm run build` on an in-sync tree leaves the working copy clean.
+- Bumping `package.json`'s version and running any of `build` / `dev` / `test` is enough to propagate — no separate manual step on `src/version.ts`.
 
 ## Licence
 

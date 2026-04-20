@@ -3,6 +3,21 @@
 All notable changes to `@aiwerk/mcp-server-wise` are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## 0.1.4 — 2026-04-20
+
+Third Axel-review pass — build workflow tightening.
+
+### Build / dev
+
+- **`npm run dev` no longer forwards a stale VERSION.** New `predev` hook runs `gen-version` before `tsc --watch`, matching `prebuild` / `pretest`. Previously a `package.json` version bump followed by `npm run dev` would serve the old version until the next explicit build.
+- **`gen-version` is idempotent.** Only writes `src/version.ts` when the content actually changes. Running `npm run build` or `npm test` on an in-sync tree no longer dirties the working copy.
+- **README build/dev notes.** Explicit section documenting that `src/version.ts` is generated+committed, and that bumping `package.json` and running any of `build` / `dev` / `test` propagates the version automatically.
+
+### Known trade-offs (documented)
+
+- `src/version.ts` is a tracked source file written by the build. Accepted pattern — fresh clones compile without an extra step, and the idempotent write keeps the tree clean when the version is in sync.
+- `server.test.ts` still reaches into `@modelcontextprotocol/sdk` private fields (`_registeredTools`, …) for tool-registry inspection. Flagged as brittle with a migration note — we'll switch to an `InMemoryTransport` + `client.listTools()` public introspection when the SDK exposes one.
+
 ## 0.1.3 — 2026-04-20
 
 Second Axel-review round — four precision fixes.
