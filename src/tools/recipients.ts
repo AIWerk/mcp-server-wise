@@ -1,11 +1,10 @@
 import * as z from 'zod';
 import { wiseApi } from '../api.js';
+import { currencyCode } from '../validators.js';
 
 export const listRecipientsInput = {
   profileId: z.number().int().positive().describe('Profile ID'),
-  currency: z
-    .string()
-    .length(3)
+  currency: currencyCode()
     .optional()
     .describe('Optional ISO-4217 filter. Without it, all currencies are returned.'),
 };
@@ -26,8 +25,8 @@ export async function getRecipient(args: { accountId: number }) {
 }
 
 export const getAccountRequirementsInput = {
-  source: z.string().length(3).describe('Source currency code (ISO-4217)'),
-  target: z.string().length(3).describe('Target currency code (ISO-4217)'),
+  source: currencyCode().describe('Source currency code (ISO-4217)'),
+  target: currencyCode().describe('Target currency code (ISO-4217)'),
   sourceAmount: z
     .number()
     .positive()

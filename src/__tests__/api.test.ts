@@ -309,6 +309,34 @@ describe('timeout + network errors', () => {
     await wiseApi.get('/v2/profiles');
     expect(fetchSpy).toHaveBeenCalled();
   });
+
+  it('rejects non-numeric WISE_API_TIMEOUT_MS with WiseConfigError', async () => {
+    vi.stubEnv('WISE_API_TIMEOUT_MS', 'not-a-number');
+    await expect(wiseApi.get('/v2/profiles')).rejects.toBeInstanceOf(WiseConfigError);
+  });
+
+  it('rejects zero timeout with WiseConfigError', async () => {
+    vi.stubEnv('WISE_API_TIMEOUT_MS', '0');
+    await expect(wiseApi.get('/v2/profiles')).rejects.toBeInstanceOf(WiseConfigError);
+  });
+
+  it('rejects negative timeout with WiseConfigError', async () => {
+    vi.stubEnv('WISE_API_TIMEOUT_MS', '-1000');
+    await expect(wiseApi.get('/v2/profiles')).rejects.toBeInstanceOf(WiseConfigError);
+  });
+
+  it('rejects trailing-garbage timeout with WiseConfigError', async () => {
+    vi.stubEnv('WISE_API_TIMEOUT_MS', '1000ms');
+    await expect(wiseApi.get('/v2/profiles')).rejects.toBeInstanceOf(WiseConfigError);
+  });
+
+  it('empty string WISE_API_TIMEOUT_MS falls back to default', async () => {
+    vi.stubEnv('WISE_API_TIMEOUT_MS', '');
+    const fetchSpy = mockFetch({ body: [] });
+    vi.stubGlobal('fetch', fetchSpy);
+    await wiseApi.get('/v2/profiles');
+    expect(fetchSpy).toHaveBeenCalled();
+  });
 });
 
 describe('read-only API surface', () => {

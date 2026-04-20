@@ -3,6 +3,31 @@
 All notable changes to `@aiwerk/mcp-server-wise` are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## 0.1.3 — 2026-04-20
+
+Second Axel-review round — four precision fixes.
+
+### Security / reliability
+
+- **`WISE_API_TIMEOUT_MS` strict.** Invalid values (non-numeric, zero, negative, trailing garbage) now throw `WiseConfigError` instead of silently falling back to the 30s default. Missing / empty env still falls back.
+
+### Input validation
+
+- **ISO-8601 real-date check.** Previous regex accepted `2026-02-30` (JavaScript's `Date.parse` wraps it to March). New validator round-trips year/month/day through `Date.UTC` and rejects any mismatch. Feb 30, month 13, day 32, and non-leap Feb 29 are all caught.
+- **Currency codes refined.** `source` / `target` / `currency` on rates, transfers, and recipients now use `/^[A-Za-z]{3}$/` with a transform-to-uppercase. Previously accepted `123`, `1$%`, `E€R`. Tool implementations keep defensive `.toUpperCase()` for direct callers that bypass zod.
+
+### Build
+
+- **Build-time `VERSION` constant.** `scripts/gen-version.mjs` writes `src/version.ts` from `package.json` before `tsc` / `vitest` run. Drops the runtime dual `../package.json` / `../../package.json` fallback in `server.ts`.
+
+### Tests
+
+- 85 total (up from 59). New `validators.test.ts` (25 tests) covers ISO-8601 edge cases and currency regex. `api.test.ts` gained five `WISE_API_TIMEOUT_MS` validation cases.
+
+### Docs / tests meta
+
+- `server.test.ts` now has a loud "⚠️ BRITTLE — SDK INTERNAL FIELDS" block and a friendlier error message on SDK private-field drift, with a migration note to `InMemoryTransport` + `client.listTools()` when the SDK exposes a stable introspection API.
+
 ## 0.1.2 — 2026-04-20
 
 Addresses the Axel + self-review findings on 0.1.1.

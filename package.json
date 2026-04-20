@@ -1,6 +1,6 @@
 {
   "name": "@aiwerk/mcp-server-wise",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Wise (TransferWise) Personal API MCP server — read-only: profiles, balances, rates, transfers, recipients",
   "type": "module",
   "main": "dist/src/server.js",
@@ -8,10 +8,11 @@
     "mcp-server-wise": "dist/src/server.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "gen-version": "node scripts/gen-version.mjs",
+    "build": "npm run gen-version && tsc -p tsconfig.json",
     "start": "node dist/src/server.js",
     "dev": "tsc --watch",
-    "test": "vitest run",
+    "test": "npm run gen-version && vitest run",
     "prepublishOnly": "npm run build && npm test"
   },
   "engines": {

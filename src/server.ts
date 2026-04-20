@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Wise (TransferWise) Personal API MCP server — 11 read-only tools.
 
-import { readFileSync, realpathSync } from 'fs';
+import { realpathSync } from 'fs';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { fileURLToPath } from 'node:url';
@@ -12,6 +12,7 @@ import {
   WiseNetworkError,
   WiseConfigError,
 } from './api.js';
+import { VERSION } from './version.js';
 import { listProfiles, getProfile, listProfilesInput, getProfileInput } from './tools/profiles.js';
 import {
   listBalances,
@@ -39,22 +40,6 @@ import {
   getRecipientInput,
   getAccountRequirementsInput,
 } from './tools/recipients.js';
-
-function readPackageVersion(): string {
-  try {
-    const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf-8')) as {
-      version: string;
-    };
-    return pkg.version;
-  } catch {
-    const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf-8')) as {
-      version: string;
-    };
-    return pkg.version;
-  }
-}
-
-const VERSION = readPackageVersion();
 
 function toolSuccess(data: unknown) {
   return {

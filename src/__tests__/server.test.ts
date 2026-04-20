@@ -20,22 +20,34 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
+// ⚠️ BRITTLE — SDK INTERNAL FIELDS
+// The MCP SDK does not expose a public "list registered tools" API on the
+// server instance. These tests reach into private fields (_registeredTools
+// et al.) purely to verify the server wiring without running a full client/
+// server pair. On @modelcontextprotocol/sdk upgrades, the private field name
+// may change; fix the lookup list below or migrate to an InMemoryTransport +
+// client.listTools() setup if/when the SDK exposes a stable introspection API.
+// See: https://github.com/modelcontextprotocol/typescript-sdk
 type RegistryLike = {
   _registeredTools?: Record<string, unknown>;
   _registeredToolsByName?: Record<string, unknown>;
   registerTool?: unknown;
 };
 
+const KNOWN_PRIVATE_FIELDS = ['_registeredTools', '_registeredToolsByName', '_tools'] as const;
+
 function toolRegistry(server: unknown): Record<string, unknown> {
-  const s = server as unknown as RegistryLike;
-  const reg =
-    s._registeredTools ??
-    s._registeredToolsByName ??
-    (s as unknown as Record<string, unknown>)['_tools'];
-  if (!reg || typeof reg !== 'object') {
-    throw new Error('could not locate tool registry on McpServer instance');
+  const s = server as unknown as RegistryLike & Record<string, unknown>;
+  for (const key of KNOWN_PRIVATE_FIELDS) {
+    const candidate = (s as unknown as Record<string, unknown>)[key];
+    if (candidate && typeof candidate === 'object') {
+      return candidate as Record<string, unknown>;
+    }
   }
-  return reg as Record<string, unknown>;
+  throw new Error(
+    `could not locate tool registry on McpServer instance. Tried private fields: ${KNOWN_PRIVATE_FIELDS.join(', ')}. ` +
+      `The @modelcontextprotocol/sdk internals may have changed — update KNOWN_PRIVATE_FIELDS or refactor these tests to use InMemoryTransport + client.listTools().`,
+  );
 }
 
 function extractToolNames(server: unknown): string[] {

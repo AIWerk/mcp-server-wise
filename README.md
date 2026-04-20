@@ -2,7 +2,7 @@
 
 Wise (TransferWise) Personal API MCP server. Read-only: profiles, balances, rates, transfers, recipients.
 
-## Tools (v0.1.2, 11 read-only)
+## Tools (v0.1.3, 11 read-only)
 
 - `wise_list_profiles`, `wise_get_profile`
 - `wise_list_balances`, `wise_get_balance`

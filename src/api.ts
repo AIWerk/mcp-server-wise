@@ -96,9 +96,13 @@ function getBaseUrl(): string {
 
 function getTimeoutMs(): number {
   const raw = process.env.WISE_API_TIMEOUT_MS;
-  if (!raw) return DEFAULT_TIMEOUT_MS;
+  if (raw === undefined || raw === '') return DEFAULT_TIMEOUT_MS;
   const n = Number.parseInt(raw, 10);
-  if (!Number.isFinite(n) || n <= 0) return DEFAULT_TIMEOUT_MS;
+  if (!Number.isFinite(n) || n <= 0 || String(n) !== raw.trim()) {
+    throw new WiseConfigError(
+      `WISE_API_TIMEOUT_MS must be a positive integer (got "${raw}"). Unset the variable to use the 30000ms default.`,
+    );
+  }
   return n;
 }
 
