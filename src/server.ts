@@ -1,12 +1,17 @@
 #!/usr/bin/env node
-// Wise (TransferWise) Personal API MCP server — 10 read-only tools.
+// Wise (TransferWise) Personal API MCP server — 11 read-only tools.
 
 import { readFileSync, realpathSync } from 'fs';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 
-import { WiseApiError } from './api.js';
+import {
+  WiseApiError,
+  WiseTimeoutError,
+  WiseNetworkError,
+  WiseConfigError,
+} from './api.js';
 import { listProfiles, getProfile, listProfilesInput, getProfileInput } from './tools/profiles.js';
 import {
   listBalances,
@@ -57,10 +62,20 @@ function toolSuccess(data: unknown) {
   };
 }
 
-function toolError(error: unknown) {
+export function toolError(error: unknown) {
   let message: string;
-  if (error instanceof WiseApiError) {
-    message = `Wise API error ${error.status} ${error.statusText}: ${JSON.stringify(error.body)}`;
+  if (error instanceof WiseTimeoutError) {
+    message = `Timeout: ${error.message}. Raise WISE_API_TIMEOUT_MS or retry.`;
+  } else if (error instanceof WiseNetworkError) {
+    message = `Network error: ${error.message}. Check connectivity or Wise status.`;
+  } else if (error instanceof WiseConfigError) {
+    message = `Configuration error: ${error.message}`;
+  } else if (error instanceof WiseApiError) {
+    const body =
+      error.body === null || error.body === undefined
+        ? ''
+        : ` — body: ${JSON.stringify(error.body)}`;
+    message = `Wise API error ${error.status} ${error.statusText}${body}`;
   } else if (error instanceof Error) {
     message = error.message;
   } else {
@@ -228,11 +243,10 @@ async function main() {
 // directly fails when npm creates a bin shim — the shim's path differs from
 // the real module path. Resolve symlinks on both sides before comparing so
 // `npx @aiwerk/mcp-server-wise` works the same as `node dist/src/server.js`.
-function isCliEntry(): boolean {
-  const entry = process.argv[1];
-  if (!entry) return false;
+export function isCliEntry(moduleUrl: string = import.meta.url, argv1: string | undefined = process.argv[1]): boolean {
+  if (!argv1) return false;
   try {
-    return realpathSync(fileURLToPath(import.meta.url)) === realpathSync(entry);
+    return realpathSync(fileURLToPath(moduleUrl)) === realpathSync(argv1);
   } catch {
     return false;
   }

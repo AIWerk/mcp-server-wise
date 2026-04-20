@@ -28,7 +28,7 @@ function capturedUrl(spy: ReturnType<typeof mockFetch>): URL {
 
 beforeEach(() => {
   vi.stubEnv('WISE_API_TOKEN', 'tkn');
-  vi.stubEnv('WISE_API_BASE_URL', 'https://test.api.wise.com');
+  vi.stubEnv('WISE_API_BASE_URL', 'https://api.wise.com');
 });
 
 afterEach(() => {
