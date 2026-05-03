@@ -1,7 +1,7 @@
 {
   "name": "@aiwerk/mcp-server-wise",
-  "version": "0.1.5",
-  "description": "Wise (TransferWise) Personal API MCP server — read-only: profiles, balances, rates, transfers, recipients",
+  "version": "0.1.6",
+  "description": "Wise (TransferWise) Personal API MCP server \u2014 read-only: profiles, balances, rates, transfers, recipients",
   "type": "module",
   "main": "dist/src/server.js",
   "bin": {
