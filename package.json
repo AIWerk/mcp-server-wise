@@ -16,7 +16,7 @@
     "dev": "tsc --watch",
     "pretest": "npm run gen-version",
     "test": "vitest run",
-    "prepublishOnly": "npm run build && npm test"
+    "prepublishOnly": "bash $HOME/agent-memory/commons/scripts/prepublish-safety.sh && npm run build && npm test"
   },
   "engines": {
     "node": ">=18.0.0"
