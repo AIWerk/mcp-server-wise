@@ -1,0 +1,30 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.AIWerk/mcp-server-wise",
+  "description": "Wise Personal API: profiles, balances, multi-currency rates, transfers, recipients (read-only).",
+  "version": "0.1.7",
+  "repository": {
+    "url": "https://github.com/AIWerk/mcp-server-wise",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@aiwerk/mcp-server-wise",
+      "version": "0.1.7",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "WISE_API_TOKEN",
+          "description": "Wise Personal API token. Create one in Wise Settings > API tokens.",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
+        }
+      ]
+    }
+  ]
+}
